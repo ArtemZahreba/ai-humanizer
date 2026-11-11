@@ -24,3 +24,18 @@ with app.app_context():
     print(f"\nTotal prompts: {len(prompts)}")
     print(f"Total AI models: {AIModel.query.count()}")
     print(f"Total history records: {HumanizationHistory.query.count()}")
+
+    print("\nAI Models:")
+
+    models = AIModel.query.all()
+
+    for model in models:
+        print(
+            f"{model.id}. {model.name} | "
+            f"{model.model_id} | "
+            f"Provider: {model.provider} | "
+            f"Active: {model.is_active}"
+        )
+
+    print(f"\nTotal AI models: {len(models)}")
+

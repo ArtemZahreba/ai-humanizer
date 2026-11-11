@@ -1,6 +1,6 @@
 
 from database.db import db
-from database.models import Prompt
+from database.models import Prompt, AIModel
 
 
 DEFAULT_PROMPTS = [
@@ -67,6 +67,30 @@ DEFAULT_PROMPTS = [
 ]
 
 
+DEFAULT_MODELS = [
+    {
+        "model_id": "deepseek-ai/DeepSeek-R1:novita",
+        "name": "DeepSeek R1",
+        "description": "Reasoning model for complex text processing.",
+        "provider": "novita",
+    },
+    {
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct:novita",
+        "name": "Llama 3.1 8B Instruct",
+        "description": "Instruction-following language model.",
+        "provider": "novita",
+    },
+    {
+        "model_id": "openai/gpt-oss-120b:groq",
+        "name": "GPT-OSS 120B",
+        "description": "Large language model for text generation.",
+        "provider": "groq",
+    },
+]
+
+
+
+
 def seed_default_prompts():
     """Insert default prompts if they do not exist."""
 
@@ -89,5 +113,29 @@ def seed_default_prompts():
         )
 
         db.session.add(prompt)
+
+    db.session.commit()
+
+
+def seed_default_models():
+    """Add default AI models to the database."""
+
+    for model_data in DEFAULT_MODELS:
+        existing_model = AIModel.query.filter_by(
+            model_id=model_data["model_id"]
+        ).first()
+
+        if existing_model:
+            continue
+
+        model = AIModel(
+            model_id=model_data["model_id"],
+            name=model_data["name"],
+            description=model_data["description"],
+            provider=model_data["provider"],
+            is_active=True
+        )
+
+        db.session.add(model)
 
     db.session.commit()

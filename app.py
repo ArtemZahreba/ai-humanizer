@@ -8,8 +8,10 @@ from database.db import db
 
 # Import database models
 from database.models import Prompt, AIModel, HumanizationHistory
-from database.seed import seed_default_prompts
-
+from database.seed import (
+    seed_default_prompts,
+    seed_default_models
+)
 # Import blueprints
 from routes.main import main_bp
 from routes.humanization import humanization_bp
@@ -63,6 +65,7 @@ def create_app():
     with app.app_context():
         db.create_all()
         seed_default_prompts()
+        seed_default_models()
 
     return app
 
