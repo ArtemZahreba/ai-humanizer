@@ -1,15 +1,284 @@
 
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Humanizer</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>AI Humanizer</h1>
-    <p>Вебзастосунок для перетворення тексту за допомогою AI.</p>
+{% block title %}AI Humanizer — Text Humanization{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">✦</div>
+            <div>
+                <h2>AI Humanizer</h2>
+                <span>Make AI text human</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <button class="nav-item active" data-view="humanization">
+                <span>✎</span>
+                <span>Humanization</span>
+            </button>
+
+            <button class="nav-item" data-view="prompts">
+                <span>▤</span>
+                <span>Prompts</span>
+            </button>
+
+            <button class="nav-item" data-view="history">
+                <span>◷</span>
+                <span>History</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="footer-icon">✧</div>
+            <p>Transform AI text into natural, human writing.</p>
+        </div>
+
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="page-heading">
+                <h1 id="page-title">Text Humanization</h1>
+                <p id="page-description">
+                    Rewrite AI-generated text to sound natural, human, and unique.
+                </p>
+            </div>
+
+            <button class="theme-toggle" id="theme-toggle"
+                    aria-label="Switch theme">
+                <span id="theme-icon">☾</span>
+            </button>
+        </header>
+
+        <!-- Humanization view -->
+        <section class="view active" id="view-humanization">
+
+            <div class="settings-row">
+
+                <div class="form-group">
+                    <label for="model-select">AI Model</label>
+                    <select id="model-select">
+                        <option value="deepseek">DeepSeek R1</option>
+                        <option value="llama">Llama 3.1 8B Instruct</option>
+                        <option value="gpt-oss">GPT-OSS 120B</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="prompt-select">Prompt (Humanization Style)</label>
+                    <select id="prompt-select">
+                        <option value="general">General Humanization</option>
+                        <option value="academic">Academic Style</option>
+                        <option value="friendly">Friendly Tone</option>
+                        <option value="professional">Professional Style</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="editor-grid">
+
+                <!-- Input -->
+                <div class="editor-card">
+
+                    <div class="editor-header">
+                        <h3>Input Text</h3>
+                        <button class="text-action" id="clear-input">
+                            Clear
+                        </button>
+                    </div>
+
+                    <textarea
+                        id="input-text"
+                        maxlength="5000"
+                        placeholder="Paste or type the text you want to humanize..."
+                    ></textarea>
+
+                    <div class="editor-footer">
+                        <span id="char-counter">0 / 5000 characters</span>
+                    </div>
+
+                </div>
+
+                <!-- Output -->
+                <div class="editor-card output-card">
+
+                    <div class="editor-header">
+                        <h3>Humanized Result</h3>
+                        <button class="text-action" id="copy-output">
+                            Copy
+                        </button>
+                    </div>
+
+                    <div class="output-content" id="output-text">
+
+                        <div class="empty-state">
+                            <div class="empty-icon">✧</div>
+                            <h3>Your humanized text will appear here</h3>
+                            <p>
+                                Enter text and click "Humanize"
+                                to get the result.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="action-area">
+                <button class="primary-button" id="humanize-button">
+                    ✧ Humanize Text
+                </button>
+            </div>
+
+        </section>
+
+        <!-- Prompts view -->
+        <section class="view" id="view-prompts">
+
+            <div class="section-header">
+                <div>
+                    <h2>Prompts</h2>
+                    <p>Create and manage your humanization styles.</p>
+                </div>
+
+                <button class="primary-button" id="create-prompt">
+                    + Create Prompt
+                </button>
+            </div>
+
+            <div class="prompt-filters">
+                <button class="prompt-filter active" data-filter="all">
+                    All Prompts
+                </button>
+
+                <button class="prompt-filter" data-filter="standard">
+                    Standard
+                </button>
+
+                <button class="prompt-filter" data-filter="custom">
+                    My Prompts
+                </button>
+            </div>
+
+            <div id="prompts-list" class="prompts-list">
+                <div class="history-message">Loading prompts...</div>
+            </div>
+
+            <!-- Create Prompt Modal -->
+            <div class="modal-overlay" id="prompt-modal" hidden>
+                <div class="modal">
+
+                    <div class="modal-header">
+                        <div>
+                            <h2 id="prompt-modal-title">Create Prompt</h2>
+                            <p id="prompt-modal-description">
+                                Create your own humanization style.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            class="modal-close"
+                            id="close-prompt-modal"
+                            aria-label="Close modal"
+                        >×</button>
+                    </div>
+
+                    <form id="prompt-form">
+
+                        <div class="modal-field">
+                            <label for="prompt-name">Prompt Name</label>
+                            <input
+                                type="text"
+                                id="prompt-name"
+                                placeholder="e.g. Natural Writing"
+                                maxlength="100"
+                                required
+                            >
+                        </div>
+
+                        <div class="modal-field">
+                            <label for="prompt-content">Prompt Content</label>
+                            <textarea
+                                id="prompt-content"
+                                placeholder="Write your instructions for AI..."
+                                rows="8"
+                                required
+                            ></textarea>
+                        </div>
+
+                        <p class="modal-error" id="prompt-error" hidden></p>
+
+                        <div class="modal-actions">
+                            <button type="button" class="secondary-button"
+                                    id="cancel-prompt">
+                                Cancel
+                            </button>
+
+                            <button type="submit" class="primary-button"
+                                    id="save-prompt">
+                                Save Prompt
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+
+        </section>
+
+
+        <!-- History view -->
+        <section class="view" id="view-history">
+
+            <div class="section-header">
+                <div>
+                    <h2>History</h2>
+                    <p>Your previous humanizations.</p>
+                </div>
+            </div>
+
+            <div class="history-toolbar">
+                <input
+                    type="search"
+                    id="history-search"
+                    placeholder="Search in history..."
+                >
+            </div>
+
+            <div id="history-list" class="history-list">
+
+                <div class="history-message">
+                    Loading history...
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/prompts.js') }}" defer></script>
+{% endblock %}
