@@ -8,6 +8,18 @@ from services.history_service import HistoryService
 class HumanizationService:
     """Service responsible for text humanization."""
 
+    OUTPUT_FORMAT_RULES = """
+    IMPORTANT OUTPUT RULES:
+    - Return only the rewritten text.
+    - Do not include introductions or explanations.
+    - Do not describe the changes you made.
+    - Do not include summaries, notes or headings.
+    - Do not use Markdown blockquotes.
+    - Do not wrap the result in quotation marks.
+    - Preserve the original meaning and important information.
+    - Start directly with the rewritten text.
+    """
+
     def __init__(self, hf_service=None):
         # Дозволяє підмінити Hugging Face сервіс під час тестування
         self.hf_service = hf_service or HuggingFaceService()
@@ -45,6 +57,7 @@ class HumanizationService:
 
         final_prompt = (
             f"{prompt.content}\n\n"
+            f"{self.OUTPUT_FORMAT_RULES}\n\n"
             f"Text to humanize:\n{text.strip()}"
         )
 

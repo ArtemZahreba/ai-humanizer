@@ -7,6 +7,16 @@
 
     <title>{% block title %}AI Humanizer{% endblock %}</title>
 
+    <!-- Restore saved theme before loading styles -->
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem("ai-humanizer-theme");
+            const theme = savedTheme === "dark" ? "dark" : "light";
+
+            document.documentElement.dataset.theme = theme;
+        })();
+    </script>
+
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
 </head>

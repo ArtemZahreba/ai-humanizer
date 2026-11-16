@@ -54,6 +54,10 @@ class HistoryService:
                 "result_text": record.result_text,
                 "model_id": record.model_id,
                 "prompt_id": record.prompt_id,
+                "prompt_name": (
+                    record.prompt.name
+                    if record.prompt else "Deleted prompt"
+                ),
                 "processing_time": record.processing_time,
                 "created_at": (
                     record.created_at.isoformat()

@@ -1,5 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
+    const inputText = document.getElementById("input-text");
+    const charCounter = document.getElementById("char-counter");
 
     // Navigation
     const navItems = document.querySelectorAll(".nav-item");
@@ -45,22 +47,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeToggle = document.getElementById("theme-toggle");
     const themeIcon = document.getElementById("theme-icon");
 
+    function updateThemeIcon(theme) {
+        themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+    }
+
+    function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+
+        localStorage.setItem("ai-humanizer-theme", theme);
+
+        updateThemeIcon(theme);
+    }
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem("ai-humanizer-theme");
+    const initialTheme = savedTheme === "dark" ? "dark" : "light";
+
+    setTheme(initialTheme);
+
+    // Toggle theme
     themeToggle.addEventListener("click", () => {
-        const isDark = document.documentElement.dataset.theme === "dark";
+        const currentTheme = document.documentElement.dataset.theme;
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
 
-        document.documentElement.dataset.theme = isDark ? "light" : "dark";
-        themeIcon.textContent = isDark ? "☾" : "☀";
+        setTheme(newTheme);
     });
-
-    // Character counter
-    const inputText = document.getElementById("input-text");
-    const charCounter = document.getElementById("char-counter");
-
-    inputText.addEventListener("input", () => {
-        charCounter.textContent =
-            `${inputText.value.length} / 5000 characters`;
-    });
-
+    
     // Clear input
     document.getElementById("clear-input").addEventListener("click", () => {
         inputText.value = "";
@@ -84,13 +96,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Humanization placeholder
-    document.getElementById("humanize-button").addEventListener("click", () => {
-        if (!inputText.value.trim()) {
-            alert("Please enter some text first.");
-            return;
-        }
+    // document.getElementById("humanize-button").addEventListener("click", () => {
+    //     if (!inputText.value.trim()) {
+    //         alert("Please enter some text first.");
+    //         return;
+    //     }
 
-        alert("AI integration will be implemented in the next stage.");
-    });
+    //     alert("AI integration will be implemented in the next stage.");
+    // });
 
 });

@@ -526,17 +526,80 @@ textarea::placeholder {
     font-size: 12px;
 }
 
-.history-item-preview {
-    color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 1.6;
-    overflow-wrap: anywhere;
+
+/* History text comparison */
+
+.history-item-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
 }
 
-.history-message {
-    padding: 40px 20px;
-    text-align: center;
-    color: var(--text-secondary);
+.history-text-block {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-secondary);
+}
+
+.history-text-block h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.history-text-block .history-item-preview {
+    white-space: pre-wrap;
+}
+
+/* Responsive history comparison */
+
+@media (max-width: 800px) {
+    .history-item-content {
+        grid-template-columns: 1fr;
+    }
+}
+.history-item-prompt {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(45, 212, 191, 0.12);
+    border: 1px solid rgba(45, 212, 191, 0.3);
+    color: #5eead4;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.history-item-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+}
+
+.history-item-model,
+.history-item-prompt {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    box-sizing: border-box;
+}
+
+.history-item-date {
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 @media (max-width: 600px) {
@@ -544,8 +607,11 @@ textarea::placeholder {
         align-items: flex-start;
         flex-direction: column;
     }
-}
 
+    .history-item-date {
+        align-self: flex-end;
+    }
+}
 
 /* Prompts */
 

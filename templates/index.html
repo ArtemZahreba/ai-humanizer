@@ -69,19 +69,14 @@
                 <div class="form-group">
                     <label for="model-select">AI Model</label>
                     <select id="model-select">
-                        <option value="deepseek">DeepSeek R1</option>
-                        <option value="llama">Llama 3.1 8B Instruct</option>
-                        <option value="gpt-oss">GPT-OSS 120B</option>
+                        <option value="">Loading models...</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="prompt-select">Prompt (Humanization Style)</label>
                     <select id="prompt-select">
-                        <option value="general">General Humanization</option>
-                        <option value="academic">Academic Style</option>
-                        <option value="friendly">Friendly Tone</option>
-                        <option value="professional">Professional Style</option>
+                        <option value="">Loading prompts...</option>
                     </select>
                 </div>
 
@@ -281,4 +276,5 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/history.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/prompts.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/humanization.js') }}" defer></script>
 {% endblock %}
