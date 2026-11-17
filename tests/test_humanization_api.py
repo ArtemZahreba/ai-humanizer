@@ -1,6 +1,6 @@
 
 from unittest.mock import patch
-
+from services.huggingface_service import HuggingFaceServiceError
 from app import app
 
 
@@ -125,12 +125,62 @@ def test_ai_provider_error():
     print("SUCCESS: AI provider error test passed!")
 
 
+def test_huggingface_service_errors():
+    client = app.test_client()
+
+    payload = {
+        "client_id": "test_client",
+        "text": "Some text",
+        "model_id": 1,
+        "prompt_id": 2
+    }
+
+    error_cases = [
+        (
+            "AI service rate limit exceeded. Please try again later.",
+            429
+        ),
+        (
+            "Selected AI model is currently unavailable.",
+            503
+        ),
+        (
+            "AI service authentication failed. Please contact support.",
+            502
+        ),
+        (
+            "Unable to connect to AI service. Please try again.",
+            503
+        ),
+        (
+            "AI service encountered an error. Please try again later.",
+            502
+        )
+    ]
+
+    with patch("routes.humanization.HumanizationService") as service_mock:
+        for message, status_code in error_cases:
+            service_mock.return_value.humanize.side_effect = (
+                HuggingFaceServiceError(message, status_code)
+            )
+
+            response = client.post("/api/humanize", json=payload)
+            data = response.get_json()
+
+            assert response.status_code == status_code
+            assert data["status"] == "error"
+            assert data["message"] == message
+
+    print("SUCCESS: Hugging Face error handling tests passed!")
+
+
 def run_tests():
     test_successful_humanization()
     test_missing_text()
     test_invalid_model_id()
     test_prompt_not_found()
     test_ai_provider_error()
+    test_huggingface_service_errors()
 
     print("\nAll Humanization API tests passed!")
 

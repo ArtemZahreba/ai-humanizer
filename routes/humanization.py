@@ -2,7 +2,7 @@
 from flask import Blueprint, jsonify, request, current_app
 
 from services.humanization_service import HumanizationService
-
+from services.huggingface_service import HuggingFaceServiceError
 
 humanization_bp = Blueprint("humanization", __name__)
 
@@ -85,6 +85,12 @@ def humanize_text():
             "status": "error",
             "message": str(error)
         }), 404
+
+    except HuggingFaceServiceError as error:
+        return jsonify({
+            "status": "error",
+            "message": str(error)
+        }), error.status_code
 
     except Exception:
         current_app.logger.exception("Humanization failed")
