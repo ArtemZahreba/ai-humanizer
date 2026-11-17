@@ -42,10 +42,19 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderFilteredHistory() {
         const query = searchInput.value.trim().toLowerCase();
 
-        const filteredRecords = historyRecords.filter(record =>
-            record.original_text.toLowerCase().includes(query) ||
-            record.result_text.toLowerCase().includes(query)
-        );
+        const filteredRecords = historyRecords.filter(record => {
+            const originalText = String(record.original_text || "").toLowerCase();
+            const resultText = String(record.result_text || "").toLowerCase();
+            const modelName = String(record.model_id || "").toLowerCase();
+            const promptName = String(record.prompt_name || "").toLowerCase();
+
+            return (
+                originalText.includes(query) ||
+                resultText.includes(query) ||
+                modelName.includes(query) ||
+                promptName.includes(query)
+            );
+        });
 
         renderHistory(filteredRecords);
     }
