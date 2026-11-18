@@ -173,6 +173,25 @@ def test_huggingface_service_errors():
 
     print("SUCCESS: Hugging Face error handling tests passed!")
 
+def test_text_too_long():
+    client = app.test_client()
+
+    payload = {
+        "client_id": "test_client",
+        "text": "a" * 5001,
+        "model_id": 1,
+        "prompt_id": 2
+    }
+
+    response = client.post("/api/humanize", json=payload)
+    data = response.get_json()
+
+    assert response.status_code == 400
+    assert data["status"] == "error"
+    assert data["message"] == "Text must not exceed 5000 characters"
+
+    print("SUCCESS: Text length validation test passed!")
+
 
 def run_tests():
     test_successful_humanization()
@@ -181,7 +200,8 @@ def run_tests():
     test_prompt_not_found()
     test_ai_provider_error()
     test_huggingface_service_errors()
-
+    test_text_too_long()
+    
     print("\nAll Humanization API tests passed!")
 
 

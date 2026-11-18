@@ -34,7 +34,13 @@ def humanize_text():
             "status": "error",
             "message": "Text is required"
         }), 400
-
+    
+    if len(text) > 5000:
+        return jsonify({
+            "status": "error",
+            "message": "Text must not exceed 5000 characters"
+        }), 400
+    
     if not isinstance(model_id, int) or isinstance(model_id, bool):
         return jsonify({
             "status": "error",
